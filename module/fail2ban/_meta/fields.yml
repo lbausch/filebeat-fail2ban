@@ -1,0 +1,9 @@
+- key: fail2ban
+  title: "Fail2Ban"
+  description: >
+    Fail2Ban Module
+  fields:
+    - name: fail2ban
+      type: group
+      description: >
+      fields:

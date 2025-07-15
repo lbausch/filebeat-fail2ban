@@ -1,0 +1,76 @@
+---
+name: Tests
+
+on:
+  push: {}
+  pull_request: {}
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  config:
+    strategy:
+      fail-fast: true
+      matrix:
+        version:
+          - 8.17.3
+
+    runs-on: ubuntu-latest
+    container:
+      image: docker.elastic.co/beats/filebeat:${{ matrix.version }}
+      options: --user root --entrypoint /bin/bash
+
+    steps:
+      - name: Check Out Repository Code
+        uses: actions/checkout@v4
+
+      - name: Validate Configuration
+        run: |
+          cp -v modules.d/fail2ban.yml.disabled /usr/share/filebeat/modules.d/fail2ban.yml
+          cp -Rv module/fail2ban /usr/share/filebeat/module
+          cd /usr/share/filebeat
+          filebeat test config
+          filebeat modules list | grep -A 1 'Enabled:' | grep fail2ban
+          filebeat run -v --once
+
+  tests:
+    env:
+      ES_HOST: http://elasticsearch:9200
+
+    strategy:
+      fail-fast: true
+      matrix:
+        version:
+          - 8.17.3
+
+    runs-on: ubuntu-latest
+    container: python:3.12-bookworm
+
+    services:
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:${{ matrix.version }}
+        ports:
+          - 9200:9200
+        env:
+          # Disable security auto configuration for 8.x
+          # https://www.elastic.co/guide/en/elasticsearch/reference/8.0/configuring-stack-security.html#stack-existing-settings-detected
+          xpack.security.enabled: false
+          # Run a single node cluster
+          discovery.type: single-node
+        options: --health-cmd "curl http://localhost:9200/_cluster/health" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Check Cluster Status
+        run: |
+          curl --silent ${{ env.ES_HOST }}
+          curl --silent ${{ env.ES_HOST }}/_cat/health
+
+      - name: Check Out Repository Code
+        uses: actions/checkout@v4
+
+      - name: Run Unit Tests
+        working-directory: tests
+        run: |
+          pip3 install deepdiff==6.7.1
+          python MainPipeline.py --failfast --verbose

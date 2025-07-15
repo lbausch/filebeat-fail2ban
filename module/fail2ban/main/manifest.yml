@@ -1,0 +1,11 @@
+module_version: 1.0
+
+var:
+  - name: paths
+    default:
+      - /var/log/fail2ban.log*
+    os.darwin: []
+    os.windows: []
+
+ingest_pipeline: ingest/pipeline.json
+input: config/main.yml
