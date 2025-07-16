@@ -206,6 +206,23 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             },
         })
 
+    def test_pipeline_decoding_error(self):
+        message = "2025-07-13 20:21:03,713 fail2ban.filter         [588]: WARNING Error decoding line from '/var/log/auth.log' with 'UTF-8'."
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-13T20:21:03.713Z',
+            'fail2ban': {
+                'message_raw': message,
+                'module': 'fail2ban.filter',
+                'pid': 588,
+                'log_level': 'WARNING',
+                'message': "Error decoding line from '/var/log/auth.log' with 'UTF-8'.",
+            },
+        })
+
 
 if __name__ == '__main__':
     unittest.main()
