@@ -32,7 +32,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
                 'pid': 100911,
                 'log_level': 'INFO',
                 'jail': 'sshd',
-                'message': 'found',
+                'action': 'found',
                 'ip': '123.123.123.123',
                 'event_timestamp': '2025-07-14 13:03:14',
             },
@@ -53,7 +53,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
                 'pid': 3833724,
                 'log_level': 'INFO',
                 'jail': 'sshd',
-                'message': 'ignore',
+                'action': 'ignore',
                 'ip': '123.123.123.123',
             },
         })
@@ -72,7 +72,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
                 'pid': 100911,
                 'log_level': 'NOTICE',
                 'jail': 'sshd',
-                'message': 'ban',
+                'action': 'ban',
                 'ip': '123.123.123.123',
             },
         })
@@ -91,7 +91,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
                 'pid': 100911,
                 'log_level': 'NOTICE',
                 'jail': 'sshd',
-                'message': 'increase_ban',
+                'action': 'increase ban',
                 'ip': '123.123.123.123',
                 'count': 2,
                 'duration': '2w 6d',
@@ -113,8 +113,96 @@ class MainPipeline(BaseTestCase.BaseTestCase):
                 'pid': 100911,
                 'log_level': 'NOTICE',
                 'jail': 'sshd',
-                'message': 'unban',
+                'action': 'unban',
                 'ip': '123.123.123.123',
+            },
+        })
+
+    def test_pipeline_already_banned(self):
+        message = '2025-07-15 16:52:34,236 fail2ban.actions        [3837823]: WARNING [sshd] 123.123.123.123 already banned'
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-15T16:52:34.236Z',
+            'fail2ban': {
+                'message_raw': message,
+                'module': 'fail2ban.actions',
+                'pid': 3837823,
+                'log_level': 'WARNING',
+                'jail': 'sshd',
+                'action': 'already banned',
+                'ip': '123.123.123.123',
+            },
+        })
+
+    def test_pipeline_unban_failure(self):
+        message = "2025-07-15 17:44:35,623 fail2ban.actions        [3837823]: ERROR   Failed to execute unban jail 'sshd' action 'nftables' info 'ActionInfo({'ip': '123.123.123.123', 'family': 'inet4', 'fid': <function Actions.ActionInfo.<lambda> at 0x7fdf9cb4d080>, 'raw-ticket': <function Actions.ActionInfo.<lambda> at 0x7fdf9cb4d800>})': Error unbanning 123.123.123.123"
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-15T17:44:35.623Z',
+            'fail2ban': {
+                'message_raw': message,
+                'module': 'fail2ban.actions',
+                'pid': 3837823,
+                'log_level': 'ERROR',
+                'message': "Failed to execute unban jail 'sshd' action 'nftables' info 'ActionInfo({'ip': '123.123.123.123', 'family': 'inet4', 'fid': <function Actions.ActionInfo.<lambda> at 0x7fdf9cb4d080>, 'raw-ticket': <function Actions.ActionInfo.<lambda> at 0x7fdf9cb4d800>})': Error unbanning 123.123.123.123",
+            },
+        })
+
+    def test_pipeline_error_with_threadid(self):
+        message = "2025-07-15 19:22:37,314 fail2ban.utils          [3837823]: ERROR   7fdf96be4630 -- stderr: 'Error: Could not process rule: No such file or directory'"
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-15T19:22:37.314Z',
+            'fail2ban': {
+                'message_raw': message,
+                'module': 'fail2ban.utils',
+                'pid': 3837823,
+                'log_level': 'ERROR',
+                'threadid': '7fdf96be4630',
+                'message': "stderr: 'Error: Could not process rule: No such file or directory'",
+            },
+        })
+
+    def test_pipeline_error_command_action(self):
+        message = '2025-07-15 15:47:39,155 fail2ban.CommandAction  [3837823]: ERROR   Invariant check failed. Unban is impossible.'
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-15T15:47:39.155Z',
+            'fail2ban': {
+                'message_raw': message,
+                'module': 'fail2ban.CommandAction',
+                'pid': 3837823,
+                'log_level': 'ERROR',
+                'message': 'Invariant check failed. Unban is impossible.',
+            },
+        })
+
+    def test_pipeline_rollover(self):
+        message = '2025-07-13 06:25:02,320 fail2ban.server         [1342]: INFO    rollover performed on /var/log/fail2ban.log'
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-13T06:25:02.320Z',
+            'fail2ban': {
+                'message_raw': message,
+                'module': 'fail2ban.server',
+                'pid': 1342,
+                'log_level': 'INFO',
+                'message': 'rollover performed on /var/log/fail2ban.log',
             },
         })
 
