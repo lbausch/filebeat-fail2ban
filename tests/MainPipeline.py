@@ -223,6 +223,25 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             },
         })
 
+    def test_pipeline_reban(self):
+        message = "2025-07-16 02:21:17,285 fail2ban.actions        [100911]: NOTICE  [sshd] Reban 123.123.123.123, action 'nftables'"
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-16T02:21:17.285Z',
+            'fail2ban': {
+                'message_raw': message,
+                'module': 'fail2ban.actions',
+                'pid': 100911,
+                'log_level': 'NOTICE',
+                'jail': 'sshd',
+                'action': 'reban',
+                'ip': '123.123.123.123',
+            },
+        })
+
 
 if __name__ == '__main__':
     unittest.main()
