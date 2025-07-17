@@ -44,6 +44,15 @@
     },
     {
       "set": {
+        "description": "Use event.timezone if available",
+        "field": "fail2ban.timezone",
+        "copy_from": "event.timezone",
+        "ignore_empty_value": true
+      }
+    },
+    {
+      "set": {
+        "description": "Fallback to UTC",
         "field": "fail2ban.timezone",
         "value": "UTC",
         "override": false
