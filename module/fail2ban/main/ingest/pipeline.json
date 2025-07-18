@@ -8,9 +8,10 @@
           "%{FAIL2BAN_LINE}"
         ],
         "pattern_definitions": {
-          "FAIL2BAN_LINE": "%{FAIL2BAN_LINE_BEGIN} (%{FAIL2BAN_FOUND}$|%{FAIL2BAN_INCREASE}$|%{FAIL2BAN_BAN}$|%{FAIL2BAN_REBAN}$|%{FAIL2BAN_UNBAN}$|%{FAIL2BAN_ALREADY_BANNED}$|%{FAIL2BAN_IGNORE}$|%{FAIL2BAN_MESSAGE})",
+          "FAIL2BAN_LINE": "%{FAIL2BAN_LINE_BEGIN} %{FAIL2BAN_MESSAGE_TYPES}",
 
           "FAIL2BAN_LINE_BEGIN": "^%{FAIL2BAN_DATETIME:fail2ban.datetime} %{FAIL2BAN_MODULE:fail2ban.module}%{SPACE}\\[%{INT:fail2ban.pid}\\]:%{SPACE}%{FAIL2BAN_LOG_LEVEL}%{SPACE}",
+          "FAIL2BAN_MESSAGE_TYPES": "(%{FAIL2BAN_FOUND:fail2ban.message}$|%{FAIL2BAN_INCREASE:fail2ban.message}$|%{FAIL2BAN_BAN:fail2ban.message}$|%{FAIL2BAN_REBAN:fail2ban.message}$|%{FAIL2BAN_UNBAN:fail2ban.message}$|%{FAIL2BAN_ALREADY_BANNED:fail2ban.message}$|%{FAIL2BAN_IGNORE:fail2ban.message}$|%{FAIL2BAN_MESSAGE})",
 
           "FAIL2BAN_DATETIME": "%{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND},%{INT}",
           "FAIL2BAN_MODULE": "fail2ban\\.[a-zA-Z]+",

@@ -28,6 +28,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             '@timestamp': '2025-07-14T13:03:14.963Z',
             'fail2ban': {
                 'message_raw': message,
+                'message': '[sshd] Found 123.123.123.123 - 2025-07-14 13:03:14',
                 'module': 'fail2ban.filter',
                 'pid': 100911,
                 'log_level': 'INFO',
@@ -49,6 +50,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             '@timestamp': '2025-07-15T16:18:39.861Z',
             'fail2ban': {
                 'message_raw': message,
+                'message': '[sshd] Ignore 123.123.123.123 by ip',
                 'module': 'fail2ban.filter',
                 'pid': 3833724,
                 'log_level': 'INFO',
@@ -68,6 +70,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             '@timestamp': '2025-07-14T13:22:07.454Z',
             'fail2ban': {
                 'message_raw': message,
+                'message': '[sshd] Ban 123.123.123.123',
                 'module': 'fail2ban.actions',
                 'pid': 100911,
                 'log_level': 'NOTICE',
@@ -87,6 +90,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             '@timestamp': '2025-07-15T11:33:41.514Z',
             'fail2ban': {
                 'message_raw': message,
+                'message': '[sshd] Increase Ban 123.123.123.123 (2 # 2w 6d -> 2025-08-04 11:33:40)',
                 'module': 'fail2ban.observer',
                 'pid': 100911,
                 'log_level': 'NOTICE',
@@ -109,6 +113,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             '@timestamp': '2025-07-15T03:05:47.193Z',
             'fail2ban': {
                 'message_raw': message,
+                'message': '[sshd] Unban 123.123.123.123',
                 'module': 'fail2ban.actions',
                 'pid': 100911,
                 'log_level': 'NOTICE',
@@ -128,6 +133,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             '@timestamp': '2025-07-15T16:52:34.236Z',
             'fail2ban': {
                 'message_raw': message,
+                'message': '[sshd] 123.123.123.123 already banned',
                 'module': 'fail2ban.actions',
                 'pid': 3837823,
                 'log_level': 'WARNING',
@@ -147,10 +153,10 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             '@timestamp': '2025-07-15T17:44:35.623Z',
             'fail2ban': {
                 'message_raw': message,
+                'message': "Failed to execute unban jail 'sshd' action 'nftables' info 'ActionInfo({'ip': '123.123.123.123', 'family': 'inet4', 'fid': <function Actions.ActionInfo.<lambda> at 0x7fdf9cb4d080>, 'raw-ticket': <function Actions.ActionInfo.<lambda> at 0x7fdf9cb4d800>})': Error unbanning 123.123.123.123",
                 'module': 'fail2ban.actions',
                 'pid': 3837823,
                 'log_level': 'ERROR',
-                'message': "Failed to execute unban jail 'sshd' action 'nftables' info 'ActionInfo({'ip': '123.123.123.123', 'family': 'inet4', 'fid': <function Actions.ActionInfo.<lambda> at 0x7fdf9cb4d080>, 'raw-ticket': <function Actions.ActionInfo.<lambda> at 0x7fdf9cb4d800>})': Error unbanning 123.123.123.123",
             },
         })
 
@@ -164,11 +170,11 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             '@timestamp': '2025-07-15T19:22:37.314Z',
             'fail2ban': {
                 'message_raw': message,
+                'message': "stderr: 'Error: Could not process rule: No such file or directory'",
                 'module': 'fail2ban.utils',
                 'pid': 3837823,
                 'log_level': 'ERROR',
                 'threadid': '7fdf96be4630',
-                'message': "stderr: 'Error: Could not process rule: No such file or directory'",
             },
         })
 
@@ -182,10 +188,10 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             '@timestamp': '2025-07-15T15:47:39.155Z',
             'fail2ban': {
                 'message_raw': message,
+                'message': 'Invariant check failed. Unban is impossible.',
                 'module': 'fail2ban.CommandAction',
                 'pid': 3837823,
                 'log_level': 'ERROR',
-                'message': 'Invariant check failed. Unban is impossible.',
             },
         })
 
@@ -199,10 +205,10 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             '@timestamp': '2025-07-13T06:25:02.320Z',
             'fail2ban': {
                 'message_raw': message,
+                'message': 'rollover performed on /var/log/fail2ban.log',
                 'module': 'fail2ban.server',
                 'pid': 1342,
                 'log_level': 'INFO',
-                'message': 'rollover performed on /var/log/fail2ban.log',
             },
         })
 
@@ -216,10 +222,10 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             '@timestamp': '2025-07-13T20:21:03.713Z',
             'fail2ban': {
                 'message_raw': message,
+                'message': "Error decoding line from '/var/log/auth.log' with 'UTF-8'.",
                 'module': 'fail2ban.filter',
                 'pid': 588,
                 'log_level': 'WARNING',
-                'message': "Error decoding line from '/var/log/auth.log' with 'UTF-8'.",
             },
         })
 
@@ -233,6 +239,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             '@timestamp': '2025-07-16T02:21:17.285Z',
             'fail2ban': {
                 'message_raw': message,
+                'message': "[sshd] Reban 123.123.123.123, action 'nftables'",
                 'module': 'fail2ban.actions',
                 'pid': 100911,
                 'log_level': 'NOTICE',
