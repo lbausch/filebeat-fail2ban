@@ -87,6 +87,13 @@
     },
     {
       "convert": {
+        "field": "fail2ban.ip",
+        "type": "ip",
+        "ignore_missing": true
+      }
+    },
+    {
+      "convert": {
         "field": "fail2ban.count",
         "type": "integer",
         "ignore_missing": true
