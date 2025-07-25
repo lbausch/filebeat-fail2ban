@@ -97,7 +97,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
                 'jail': 'sshd',
                 'action': 'increase ban',
                 'ip': '123.123.123.123',
-                'count': 2,
+                'ban_count': 2,
                 'duration': '2w 6d',
                 'expiry': '2025-08-04 11:33:40',
             },

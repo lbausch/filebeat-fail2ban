@@ -33,7 +33,7 @@
           "FAIL2BAN_JAIL_NAME": "[a-z\\-_]+",
 
           "FAIL2BAN_INCREASE_TO": "incr %{DATA}",
-          "FAIL2BAN_INCREASE_DETAILS": "%{INT:fail2ban.count} # %{DATA:fail2ban.duration} -> %{TIMESTAMP_ISO8601:fail2ban.expiry}",
+          "FAIL2BAN_INCREASE_DETAILS": "%{INT:fail2ban.ban_count} # %{DATA:fail2ban.duration} -> %{TIMESTAMP_ISO8601:fail2ban.expiry}",
 
           "FAIL2BAN_MESSAGE": "(%{FAIL2BAN_THREADID:fail2ban.threadid} -- )?%{GREEDYDATA:fail2ban.message}",
           "FAIL2BAN_THREADID": "[a-z0-9]+"
@@ -128,13 +128,6 @@
       "convert": {
         "field": "fail2ban.ip",
         "type": "ip",
-        "ignore_missing": true
-      }
-    },
-    {
-      "convert": {
-        "field": "fail2ban.count",
-        "type": "integer",
         "ignore_missing": true
       }
     },
