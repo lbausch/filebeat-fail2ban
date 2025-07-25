@@ -11,12 +11,13 @@
           "FAIL2BAN_LINE": "%{FAIL2BAN_LINE_BEGIN} %{FAIL2BAN_MESSAGE_TYPES}",
 
           "FAIL2BAN_LINE_BEGIN": "^%{FAIL2BAN_DATETIME:fail2ban.datetime} %{FAIL2BAN_MODULE:fail2ban.module}%{SPACE}\\[%{INT:fail2ban.pid}\\]:%{SPACE}%{FAIL2BAN_LOG_LEVEL}%{SPACE}",
-          "FAIL2BAN_MESSAGE_TYPES": "(%{FAIL2BAN_FOUND:fail2ban.message}$|%{FAIL2BAN_INCREASE:fail2ban.message}$|%{FAIL2BAN_BAN:fail2ban.message}$|%{FAIL2BAN_REBAN:fail2ban.message}$|%{FAIL2BAN_UNBAN:fail2ban.message}$|%{FAIL2BAN_ALREADY_BANNED:fail2ban.message}$|%{FAIL2BAN_IGNORE:fail2ban.message}$|%{FAIL2BAN_MESSAGE})",
+          "FAIL2BAN_MESSAGE_TYPES": "(%{FAIL2BAN_IP_BAD:fail2ban.message}$|%{FAIL2BAN_FOUND:fail2ban.message}$|%{FAIL2BAN_INCREASE:fail2ban.message}$|%{FAIL2BAN_BAN:fail2ban.message}$|%{FAIL2BAN_REBAN:fail2ban.message}$|%{FAIL2BAN_UNBAN:fail2ban.message}$|%{FAIL2BAN_ALREADY_BANNED:fail2ban.message}$|%{FAIL2BAN_IGNORE:fail2ban.message}$|%{FAIL2BAN_MESSAGE})",
 
           "FAIL2BAN_DATETIME": "%{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND},%{INT}",
           "FAIL2BAN_MODULE": "fail2ban\\.[a-zA-Z]+",
           "FAIL2BAN_LOG_LEVEL": "%{LOGLEVEL:fail2ban.log_level}",
 
+          "FAIL2BAN_IP_BAD": "%{FAIL2BAN_JAIL} IP %{IP:fail2ban.ip} is bad: %{NUMBER:fail2ban.ban_count} # last %{TIMESTAMP_ISO8601:fail2ban.ban_timestamp} - %{FAIL2BAN_INCREASE_TO:fail2ban.increase_to}",
           "FAIL2BAN_BAN": "%{FAIL2BAN_JAIL} %{FAIL2BAN_ACTION:fail2ban.action} %{IP:fail2ban.ip}",
           "FAIL2BAN_REBAN": "%{FAIL2BAN_JAIL} %{FAIL2BAN_ACTION:fail2ban.action} %{IP:fail2ban.ip}.+",
           "FAIL2BAN_FOUND": "%{FAIL2BAN_JAIL} %{FAIL2BAN_ACTION:fail2ban.action} %{IP:fail2ban.ip} - %{TIMESTAMP_ISO8601:fail2ban.event_timestamp}",
@@ -30,6 +31,7 @@
           "FAIL2BAN_JAIL": "\\[%{FAIL2BAN_JAIL_NAME:fail2ban.jail}\\]",
           "FAIL2BAN_JAIL_NAME": "[a-z\\-_]+",
 
+          "FAIL2BAN_INCREASE_TO": "incr %{DATA}",
           "FAIL2BAN_INCREASE_DETAILS": "%{INT:fail2ban.count} # %{DATA:fail2ban.duration} -> %{TIMESTAMP_ISO8601:fail2ban.expiry}",
 
           "FAIL2BAN_MESSAGE": "(%{FAIL2BAN_THREADID:fail2ban.threadid} -- )?%{GREEDYDATA:fail2ban.message}",
@@ -81,6 +83,17 @@
       }
     },
     {
+      "date": {
+        "field": "fail2ban.ban_timestamp",
+        "target_field": "fail2ban.ban_timestamp",
+        "timezone": "{{ fail2ban.timezone }}",
+        "formats": [
+          "uuuu-MM-dd HH:mm:ss"
+        ],
+        "if": "ctx.fail2ban?.ban_timestamp != null"
+      }
+    },
+    {
       "remove": {
         "field": "fail2ban.datetime"
       }
@@ -94,6 +107,13 @@
       "convert": {
         "field": "fail2ban.pid",
         "type": "integer"
+      }
+    },
+    {
+      "convert": {
+        "field": "fail2ban.ban_count",
+        "type": "integer",
+        "ignore_missing": true
       }
     },
     {

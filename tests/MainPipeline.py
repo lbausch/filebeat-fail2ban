@@ -249,6 +249,28 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             },
         })
 
+    def test_pipeline_ip_is_bad(self):
+        message = '2025-07-25 05:53:25,779 fail2ban.observer [100911]: INFO [sshd] IP 123.123.123.123 is bad: 1 # last 2025-07-19 22:55:27 - incr 5d to 2w 6d'
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-25T05:53:25.779Z',
+            'fail2ban': {
+                'message_raw': message,
+                'message': '[sshd] IP 123.123.123.123 is bad: 1 # last 2025-07-19 22:55:27 - incr 5d to 2w 6d',
+                'module': 'fail2ban.observer',
+                'pid': 100911,
+                'log_level': 'INFO',
+                'jail': 'sshd',
+                'ip': '123.123.123.123',
+                'ban_count': 1,
+                'ban_timestamp': '2025-07-19T22:55:27.000Z',
+                'increase_to': 'incr 5d to 2w 6d',
+            },
+        })
+
 
 if __name__ == '__main__':
     unittest.main()
