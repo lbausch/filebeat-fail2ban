@@ -99,7 +99,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
                 'ip': '123.123.123.123',
                 'ban_count': 2,
                 'duration': '2w 6d',
-                'expiry': '2025-08-04 11:33:40',
+                'expire_timestamp': '2025-08-04T11:33:40.000Z',
             },
         })
 
