@@ -271,6 +271,28 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             },
         })
 
+    def test_pipeline_ip_retry_counter(self):
+        message = '2025-07-25 05:53:25,353 fail2ban.observer [100911]: INFO [sshd] Found 123.123.123.123, bad - 2025-07-25 05:53:25, 1 # -> 2.0'
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-25T05:53:25.353Z',
+            'fail2ban': {
+                'message_raw': message,
+                'message': '[sshd] Found 123.123.123.123, bad - 2025-07-25 05:53:25, 1 # -> 2.0',
+                'module': 'fail2ban.observer',
+                'pid': 100911,
+                'log_level': 'INFO',
+                'jail': 'sshd',
+                'action': 'found',
+                'ip': '123.123.123.123',
+                'event_timestamp': '2025-07-25T05:53:25.000Z',
+                'ban_count': 1,
+                'retry_count': 2.0,
+            },
+        })
 
 if __name__ == '__main__':
     unittest.main()
