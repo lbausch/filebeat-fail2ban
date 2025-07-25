@@ -294,5 +294,25 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             },
         })
 
+    def test_pipeline_restore_ban(self):
+        message = '2025-07-14 11:02:35,560 fail2ban.actions [100911]: NOTICE [sshd] Restore Ban 123.123.123.123'
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-14T11:02:35.560Z',
+            'fail2ban': {
+                'message_raw': message,
+                'message': '[sshd] Restore Ban 123.123.123.123',
+                'module': 'fail2ban.actions',
+                'pid': 100911,
+                'log_level': 'NOTICE',
+                'jail': 'sshd',
+                'action': 'restore ban',
+                'ip': '123.123.123.123',
+            },
+        })
+
 if __name__ == '__main__':
     unittest.main()
