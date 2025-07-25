@@ -70,6 +70,17 @@
       }
     },
     {
+      "date": {
+        "field": "fail2ban.event_timestamp",
+        "target_field": "fail2ban.event_timestamp",
+        "timezone": "{{ fail2ban.timezone }}",
+        "formats": [
+          "uuuu-MM-dd HH:mm:ss"
+        ],
+        "if": "ctx.fail2ban?.event_timestamp != null"
+      }
+    },
+    {
       "remove": {
         "field": "fail2ban.datetime"
       }

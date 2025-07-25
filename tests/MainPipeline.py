@@ -35,7 +35,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
                 'jail': 'sshd',
                 'action': 'found',
                 'ip': '123.123.123.123',
-                'event_timestamp': '2025-07-14 13:03:14',
+                'event_timestamp': '2025-07-14T13:03:14.000Z',
             },
         })
 
