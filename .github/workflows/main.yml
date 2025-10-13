@@ -51,7 +51,7 @@ jobs:
           - 9.1.5
 
     runs-on: ubuntu-latest
-    container: python:3.12-bookworm
+    container: python:3.13-trixie
 
     services:
       elasticsearch:
@@ -78,5 +78,5 @@ jobs:
       - name: Run Unit Tests
         working-directory: tests
         run: |
-          pip3 install deepdiff==6.7.1
+          pip3 install deepdiff==8.6.1
           python MainPipeline.py --failfast --verbose
