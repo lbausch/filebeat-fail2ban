@@ -23,6 +23,10 @@ jobs:
       options: --user root --entrypoint /bin/bash
 
     steps:
+      - name: Install tar
+        if: startsWith(matrix.version, '9.')
+        run: microdnf --refresh install -y tar
+
       - name: Check Out Repository Code
         uses: actions/checkout@v4
 
