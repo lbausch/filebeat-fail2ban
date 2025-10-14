@@ -35,7 +35,7 @@ class MainPipeline(BaseTestCase.BaseTestCase):
                 'jail': 'sshd',
                 'action': 'found',
                 'ip': '123.123.123.123',
-                'event_timestamp': '2025-07-14 13:03:14',
+                'event_timestamp': '2025-07-14T13:03:14.000Z',
             },
         })
 
@@ -97,9 +97,9 @@ class MainPipeline(BaseTestCase.BaseTestCase):
                 'jail': 'sshd',
                 'action': 'increase ban',
                 'ip': '123.123.123.123',
-                'count': 2,
+                'ban_count': 2,
                 'duration': '2w 6d',
-                'expiry': '2025-08-04 11:33:40',
+                'expire_timestamp': '2025-08-04T11:33:40.000Z',
             },
         })
 
@@ -249,6 +249,70 @@ class MainPipeline(BaseTestCase.BaseTestCase):
             },
         })
 
+    def test_pipeline_ip_is_bad(self):
+        message = '2025-07-25 05:53:25,779 fail2ban.observer [100911]: INFO [sshd] IP 123.123.123.123 is bad: 1 # last 2025-07-19 22:55:27 - incr 5d to 2w 6d'
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-25T05:53:25.779Z',
+            'fail2ban': {
+                'message_raw': message,
+                'message': '[sshd] IP 123.123.123.123 is bad: 1 # last 2025-07-19 22:55:27 - incr 5d to 2w 6d',
+                'module': 'fail2ban.observer',
+                'pid': 100911,
+                'log_level': 'INFO',
+                'jail': 'sshd',
+                'ip': '123.123.123.123',
+                'ban_count': 1,
+                'ban_timestamp': '2025-07-19T22:55:27.000Z',
+                'increase_to': 'incr 5d to 2w 6d',
+            },
+        })
+
+    def test_pipeline_ip_retry_counter(self):
+        message = '2025-07-25 05:53:25,353 fail2ban.observer [100911]: INFO [sshd] Found 123.123.123.123, bad - 2025-07-25 05:53:25, 1 # -> 2.0'
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-25T05:53:25.353Z',
+            'fail2ban': {
+                'message_raw': message,
+                'message': '[sshd] Found 123.123.123.123, bad - 2025-07-25 05:53:25, 1 # -> 2.0',
+                'module': 'fail2ban.observer',
+                'pid': 100911,
+                'log_level': 'INFO',
+                'jail': 'sshd',
+                'action': 'found',
+                'ip': '123.123.123.123',
+                'event_timestamp': '2025-07-25T05:53:25.000Z',
+                'ban_count': 1,
+                'retry_count': 2.0,
+            },
+        })
+
+    def test_pipeline_restore_ban(self):
+        message = '2025-07-14 11:02:35,560 fail2ban.actions [100911]: NOTICE [sshd] Restore Ban 123.123.123.123'
+
+        response = self.request(message)
+        source = self.source(response)
+
+        self.assertSourceEquals(source, {
+            '@timestamp': '2025-07-14T11:02:35.560Z',
+            'fail2ban': {
+                'message_raw': message,
+                'message': '[sshd] Restore Ban 123.123.123.123',
+                'module': 'fail2ban.actions',
+                'pid': 100911,
+                'log_level': 'NOTICE',
+                'jail': 'sshd',
+                'action': 'restore ban',
+                'ip': '123.123.123.123',
+            },
+        })
 
 if __name__ == '__main__':
     unittest.main()
